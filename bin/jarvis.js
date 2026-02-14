@@ -27,25 +27,43 @@ function isLoggedIn() {
 
 // First-time login setup
 async function login() {
+    console.clear();
+
+    console.log(
+        gradient.pastel.multiline(
+            figlet.textSync("JARVIS", { horizontalLayout: "full" })
+        )
+    );
+
+    console.log(
+        boxen(
+            chalk.cyan("Welcome to Jarvis Setup 🚀\nPlease enter your details"),
+            { padding: 1, borderColor: "magenta", borderStyle: "round" }
+        )
+    );
+
     const readline = require("readline").createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
     const ask = (question) =>
-        new Promise((resolve) => readline.question(question, resolve));
+        new Promise((resolve) =>
+            readline.question(chalk.yellow(question), resolve)
+        );
 
-    const username = await ask("Enter username: ");
-    const email = await ask("Enter email: ");
-    const password = await ask("Enter password: ");
-    const githubToken = await ask("Enter GitHub Token: ");
+    const username = await ask("👤 Username: ");
+    const email = await ask("📧 Email: ");
+    const password = await ask("🔑 Password: ");
+    const githubToken = await ask("🐙 GitHub Token: ");
 
     await fs.ensureDir(path.dirname(userFile));
     await fs.writeJson(userFile, { username, email, password, githubToken });
 
-    console.log("\n✅ Login saved! Run your command again.");
+    console.log(chalk.green("\n✅ Login saved successfully!"));
     readline.close();
 }
+
 
 // If not logged in → force login
 async function requireLogin() {
@@ -80,7 +98,10 @@ async function run() {
         const { execSync } = require("child_process");
         const fs = require("fs-extra");
 
-        console.log("🚀 Creating backend project...");
+        const spinner = ora(chalk.cyan("Building your backend...")).start();
+
+
+
 
         // 1️⃣ npm init
         execSync("npm init -y", { stdio: "inherit" });
@@ -139,24 +160,151 @@ async function run() {
             `
         );
 
-        console.log("✅ Backend setup complete!");
+        spinner.succeed(chalk.green("Backend setup complete! 🎉"));
     }
 
     else if (command === "create" && subCommand === "frontend") {
         const inquirer = require("inquirer");
+        const { execSync } = require("child_process");
+        const ora = require("ora");
+        const fs = require("fs-extra");
 
-        const answer = await inquirer.prompt([
+        // 1️⃣ Ask project name
+        const { projectName } = await inquirer.prompt([
+            {
+                type: "input",
+                name: "projectName",
+                message: "Enter project name:",
+                default: "my-frontend"
+            }
+        ]);
+
+        // 2️⃣ Ask type
+        const { frontendType } = await inquirer.prompt([
             {
                 type: "list",
                 name: "frontendType",
                 message: "What do you want to create?",
-                choices: ["Website", "App"],
+                choices: [
+                    "Website (React + Vite + Tailwind)",
+                    "Android App (React Native + Expo)"
+                ],
             },
         ]);
 
-        console.log(`You selected: ${answer.frontendType}`);
-        console.log("🚧 This feature is coming soon...");
+        // 3️⃣ Confirm
+        const { proceed } = await inquirer.prompt([
+            {
+                type: "confirm",
+                name: "proceed",
+                message: `Create ${frontendType} named "${projectName}"?`,
+                default: true,
+            },
+        ]);
+
+        if (!proceed) {
+            console.log("❌ Cancelled.");
+            return;
+        }
+
+        // ============================
+        // 🌐 WEBSITE SETUP
+        // ============================
+        if (frontendType.includes("Website")) {
+            const spinner = ora("Creating React + Vite + Tailwind project...").start();
+
+            try {
+                // Create Vite React project
+                execSync(
+                    `npm create vite@latest ${projectName} -- --template react --yes`,
+                    { stdio: "ignore" }
+                );
+
+                process.chdir(projectName);
+
+                // Install base deps
+                execSync("npm install", { stdio: "ignore" });
+
+                // Install Tailwind v3 (STABLE)
+                execSync(
+                    "npm install -D tailwindcss@3.4.4 postcss autoprefixer",
+                    { stdio: "ignore" }
+                );
+
+                // Init Tailwind (works in v3)
+                execSync("npx tailwindcss init -p", { stdio: "ignore" });
+
+                // Configure Tailwind content paths
+                const tailwindConfig = `
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+`;
+                fs.writeFileSync("tailwind.config.js", tailwindConfig);
+
+                // Add Tailwind to CSS
+                fs.writeFileSync(
+                    "src/index.css",
+                    `
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`
+                );
+
+                // Ensure CSS is imported
+                fs.appendFileSync(
+                    "src/main.jsx",
+                    `\nimport './index.css';\n`
+                );
+
+                spinner.succeed("Website ready! 🚀");
+
+                console.log("\nNext steps:");
+                console.log(`cd ${projectName}`);
+                console.log("npm run dev");
+
+            } catch (err) {
+                spinner.fail("Failed to create website");
+                console.log(err.message);
+            }
+        }
+
+        // ============================
+        // 📱 ANDROID APP SETUP
+        // ============================
+        else {
+            const spinner = ora("Creating React Native app (Expo)...").start();
+
+            try {
+                execSync(
+                    `npx create-expo-app ${projectName} --yes`,
+                    { stdio: "ignore" }
+                );
+
+                spinner.succeed("Android app ready! 📱");
+
+                console.log("\nNext steps:");
+                console.log(`cd ${projectName}`);
+                console.log("npm start");
+
+            } catch (err) {
+                spinner.fail("Failed to create app");
+                console.log(err.message);
+            }
+        }
     }
+
+
+
 
 
     else if (command === "create" && subCommand === "repo") {
@@ -207,11 +355,15 @@ async function run() {
     }
 
     else {
-        console.log(`Hello ${user.username} 👋`);
-        console.log("Try commands:");
-        console.log("jarvis tell date");
-        console.log("jarvis tell time");
-        console.log("jarvis tell score");
+        console.log(
+            boxen(
+                gradient.atlas(`Welcome back, ${user.username} 🚀`),
+                { padding: 1, borderColor: "green", borderStyle: "round" }
+            )
+        );
+        console.log(chalk.yellow("📦 jarvis create backend"));
+        console.log(chalk.cyan("🌐 jarvis create frontend"));
+
     }
 }
 
