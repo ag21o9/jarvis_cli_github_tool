@@ -26,6 +26,7 @@
     "fs-extra": "^11.3.3",
     "gradient-string": "^2.0.2",
     "inquirer": "^8.2.7",
+    "jarvis_github_cli": "^1.0.0",
     "ora": "^5.4.1",
     "simple-git": "^3.31.1"
   }

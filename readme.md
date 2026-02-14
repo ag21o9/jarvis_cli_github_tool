@@ -245,6 +245,7 @@ Perfect for:
 
 # Author
 
+Its me Abhijeet Gupta
 Built with ❤️ to make development faster and more enjoyable.
 
 ---
