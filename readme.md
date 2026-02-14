@@ -249,26 +249,46 @@ Contributions are welcome and appreciated. If you would like to improve the Jarv
 
 ### 📌 How to Contribute
 
-1. Fork this repository.
+1. Fork this repository to your GitHub account.
+
 2. Clone your fork locally:
+   ```bash
    git clone https://github.com/your-username/jarvis_cli_github_tool.git
+   ```
 
-3. Move into the project folder:
+3. Navigate into the project directory:
+   ```bash
    cd jarvis_cli_github_tool
+   ```
 
-4. Create a new branch for your changes:
+4. Make sure your local main branch is up to date:
+   ```bash
+   git switch main
+   git pull origin main
+   ```
+
+5. Create a new branch for your changes:
+   ```bash
    git switch -c docs/your-change-name
-   (Use prefixes like `feat/`, `fix/`, or `docs/` depending on your change.)
+   ```
+   (Use prefixes like `feat/`, `fix/`, or `docs/` based on your contribution.)
 
-5. Make your updates and test the CLI locally.
+6. Make your updates and test the CLI locally before committing.
 
-6. Commit with a clear message:
+7. Stage and commit your changes:
+   ```bash
+   git add .
    git commit -m "update project files"
+   ```
 
-7. Push your branch:
+8. Push your branch to your fork:
+   ```bash
    git push origin docs/your-change-name
+   ```
 
-8. Open a Pull Request and explain what you changed and why.
+9. Go to GitHub and open a Pull Request from your branch to the main repository.
+   Provide a clear description of what you changed and why.
+
 
 ---
 
