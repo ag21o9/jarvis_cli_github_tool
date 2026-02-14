@@ -5,6 +5,12 @@ const path = require("path");
 const axios = require("axios");
 const simpleGit = require("simple-git");
 const git = simpleGit();
+const chalk = require("chalk");
+const ora = require("ora");
+const figlet = require("figlet");
+const gradient = require("gradient-string");
+const boxen = require("boxen");
+
 
 // Path where user info will be stored
 const userFile = path.join(__dirname, "../data/user.json");
@@ -35,7 +41,7 @@ async function login() {
     const githubToken = await ask("Enter GitHub Token: ");
 
     await fs.ensureDir(path.dirname(userFile));
-    await fs.writeJson(userFile, { username, email, password, githubToken  });
+    await fs.writeJson(userFile, { username, email, password, githubToken });
 
     console.log("\n✅ Login saved! Run your command again.");
     readline.close();
@@ -66,20 +72,93 @@ async function run() {
             const time = new Date().toLocaleTimeString();
             console.log(`Hey ${user.username}, current time is ${time}`);
         }
-
-        else if (subCommand === "score") {
-            console.log(`Hey ${user.username}, your HackerRank 5⭐ still shining 😎`);
-        }
-
         else {
             console.log("Unknown tell command");
         }
     }
+    else if (command === "create" && subCommand === "backend") {
+        const { execSync } = require("child_process");
+        const fs = require("fs-extra");
 
-    else if (command === "logout") {
-        await fs.remove(userFile);
-        console.log("Logged out successfully.");
+        console.log("🚀 Creating backend project...");
+
+        // 1️⃣ npm init
+        execSync("npm init -y", { stdio: "inherit" });
+
+        // 2️⃣ Install dependencies
+        execSync("npm install express prisma cors axios dotenv", {
+            stdio: "inherit",
+        });
+
+        // 3️⃣ Create folders
+        fs.ensureDirSync("src");
+        fs.ensureDirSync("config");
+        fs.ensureDirSync("assets");
+
+        // 4️⃣ Create .env
+        fs.writeFileSync(".env", "PORT=3000\nDATABASE_URL=\n");
+
+        // 5️⃣ Create .gitignore
+        fs.writeFileSync(
+            ".gitignore",
+            `
+            node_modules
+            .env
+            `
+        );
+
+        // 6️⃣ Update package.json → type module
+        const pkg = fs.readJsonSync("package.json");
+        pkg.type = "module";
+        fs.writeJsonSync("package.json", pkg, { spaces: 2 });
+
+        // 7️⃣ Create index.js starter
+        fs.writeFileSync(
+            "index.js",
+            `
+            import express from "express";
+            import cors from "cors";
+            import dotenv from "dotenv";
+
+            dotenv.config();
+
+            const app = express();
+
+            app.use(cors());
+            app.use(express.json());
+
+            app.get("/", (req, res) => {
+              res.send("API Running 🚀");
+            });
+
+            const PORT = process.env.PORT || 3000;
+
+            app.listen(PORT, () => {
+              console.log("Server running on port", PORT);
+            });
+            `
+        );
+
+        console.log("✅ Backend setup complete!");
     }
+
+    else if (command === "create" && subCommand === "frontend") {
+        const inquirer = require("inquirer");
+
+        const answer = await inquirer.prompt([
+            {
+                type: "list",
+                name: "frontendType",
+                message: "What do you want to create?",
+                choices: ["Website", "App"],
+            },
+        ]);
+
+        console.log(`You selected: ${answer.frontendType}`);
+        console.log("🚧 This feature is coming soon...");
+    }
+
+
     else if (command === "create" && subCommand === "repo") {
         const repoName = args[2];
 
@@ -121,6 +200,10 @@ async function run() {
         } catch (err) {
             console.log("❌ Error:", err.response?.data || err.message);
         }
+    }
+    else if (command === "logout") {
+        await fs.remove(userFile);
+        console.log("Logged out successfully.");
     }
 
     else {
