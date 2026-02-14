@@ -363,6 +363,7 @@ export default {
         );
         console.log(chalk.yellow("📦 jarvis create backend"));
         console.log(chalk.cyan("🌐 jarvis create frontend"));
+        console.log(chalk.cyan("🌐 jarvis create repo"));
 
     }
 }
