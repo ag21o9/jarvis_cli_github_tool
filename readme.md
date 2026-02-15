@@ -243,6 +243,74 @@ Perfect for:
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome and appreciated. If you would like to improve the Jarvis CLI GitHub Tool, please follow the workflow below to keep the project clean and easy to maintain.
+
+### 📌 How to Contribute
+
+1. Fork this repository to your GitHub account.
+
+2. Clone your fork locally:
+   ```bash
+   git clone https://github.com/your-username/jarvis_cli_github_tool.git
+   ```
+
+3. Navigate into the project directory:
+   ```bash
+   cd jarvis_cli_github_tool
+   ```
+
+4. Make sure your local main branch is up to date:
+   ```bash
+   git switch main
+   git pull origin main
+   ```
+
+5. Create a new branch for your changes:
+   ```bash
+   git switch -c docs/your-change-name
+   ```
+   (Use prefixes like `feat/`, `fix/`, or `docs/` based on your contribution.)
+
+6. Make your updates and test the CLI locally before committing.
+
+7. Stage and commit your changes:
+   ```bash
+   git add .
+   git commit -m "update project files"
+   ```
+
+8. Push your branch to your fork:
+   ```bash
+   git push origin docs/your-change-name
+   ```
+
+9. Go to GitHub and open a Pull Request from your branch to the main repository.
+   Provide a clear description of what you changed and why.
+
+
+---
+
+### 🧩 Contribution Guidelines
+
+- Keep pull requests small and focused.
+- Follow the existing project structure and naming conventions.
+- Write clear commit messages.
+- Update documentation if your change affects CLI usage or commands.
+
+---
+
+### 🐞 Reporting Issues
+
+If you find a bug or want to suggest a feature:
+
+- Open an Issue in the repository.
+- Provide clear steps to reproduce.
+- Include screenshots or terminal logs when possible.
+
+---
+
 # Author
 
 Its me Abhijeet Gupta
