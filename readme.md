@@ -53,7 +53,7 @@ First-time setup stores:
 Install globally using npm:
 
 ```bash
-npm install -g <your-package-name>
+npm i jarvis_github_cli@1.0.0
 ```
 
 After installing, you can run from anywhere:
